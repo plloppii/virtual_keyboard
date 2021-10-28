@@ -38,9 +38,8 @@ function virtualKeyboardChromeExtension_generate_onchange()
                 virtualKeyboardChromeExtensionClickedElem.fireEvent("onchange");
             else
                 {
-                var evt = document.createEvent("HTMLEvents");
-                evt.initEvent("change", false, true);
-                virtualKeyboardChromeExtensionClickedElem.dispatchEvent(evt);
+				var event = new Event("change", {bubbles: true, cancelable:true})
+                virtualKeyboardChromeExtensionClickedElem.dispatchEvent(event);
                 }
             }
         }
@@ -202,20 +201,21 @@ function virtualKeyboardChromeExtension_click(key, skip) {
 							}
 							delete inputs;
 						}
-						var keyboardEvent = document.createEvent("KeyboardEvent");
-						var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
-						keyboardEvent[initMethod](
-						   "keydown", // event type : keydown, keyup, keypress
-							true, // bubbles
-							true, // cancelable
-							window, // viewArg: should be window
-							false, // ctrlKeyArg
-							false, // altKeyArg
-							false, // shiftKeyArg
-							false, // metaKeyArg
-							13, // keyCodeArg : unsigned long the virtual key code, else 0
-							0 // charCodeArgs : unsigned long the Unicode character associated with the depressed key, else 0
-						);
+
+						keyboardEvent = new KeyboardEvent("keyup", {
+							key: 'Enter',
+							code: 'Enter',
+							keyCode: 13, //deprecated
+							charCode: 13,
+							which: 13, //deprecated
+							view: window,
+							bubbles: true,
+							cancelable: true,
+							ctrlKey: false,
+							altKey: false,
+							shiftKey: false,
+							metaKey: false
+						})
 						virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
 						delete form;
 
@@ -281,20 +281,18 @@ function virtualKeyboardChromeExtension_click(key, skip) {
 						maxLength = virtualKeyboardChromeExtensionClickedElem.maxLength;
 					}
 					if ((maxLength <= 0) || (virtualKeyboardChromeExtensionClickedElem.value.length < maxLength)) {
-						var keyboardEvent = document.createEvent("KeyboardEvent");
-						var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
-						keyboardEvent[initMethod](
-						   "keydown", // event type : keydown, keyup, keypress
-							true, // bubbles
-							true, // cancelable
-							window, // viewArg: should be window
-							false, // ctrlKeyArg
-							false, // altKeyArg
-							false, // shiftKeyArg
-							false, // metaKeyArg
-							key.charCodeAt(0), // keyCodeArg : unsigned long the virtual key code, else 0
-							0 // charCodeArgs : unsigned long the Unicode character associated with the depressed key, else 0
-						);
+						var keyboardEvent = new KeyboardEvent("keydown", {
+							key: key,
+							keyCode: key.charCodeAt(0), //deprecated
+							which: key.charCodeAt(0), //deprecated
+							view: window,
+							bubbles: true,
+							cancelable: true,
+							ctrlKey: false,
+							altKey: false,
+							shiftKey: false,
+							metaKey: false
+						})
 						virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
 						var pos = virtualKeyboardChromeExtensionClickedElem.selectionStart;
 						var posEnd = virtualKeyboardChromeExtensionClickedElem.selectionEnd;
@@ -321,36 +319,35 @@ function virtualKeyboardChromeExtension_click(key, skip) {
 						}
 						virtualKeyboardChromeExtensionDraggabling = false;
 						
-						keyboardEvent = document.createEvent("KeyboardEvent");
-						initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
-						keyboardEvent[initMethod](
-										   "keypress", // event type : keydown, keyup, keypress
-											true, // bubbles
-											true, // cancelable
-											window, // viewArg: should be window
-											false, // ctrlKeyArg
-											false, // altKeyArg
-											false, // shiftKeyArg
-											false, // metaKeyArg
-											0, // keyCodeArg : unsigned long the virtual key code, else 0
-											key.charCodeAt(0) // charCodeArgs : unsigned long the Unicode character associated with the depressed key, else 0
-						);
+						keyboardEvent = new KeyboardEvent("keypress", {
+							key: key,
+							keyCode: key.charCodeAt(0), //deprecated
+							which: key.charCodeAt(0), //deprecated
+							view: window,
+							bubbles: true,
+							cancelable: true,
+							ctrlKey: false,
+							altKey: false,
+							shiftKey: false,
+							metaKey: false
+						})
 						virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
+
+						var inputEvent = new Event("input", {bubbles:true, cancelable:true})
+						virtualKeyboardChromeExtensionClickedElem.dispatchEvent(inputEvent)
 						
-						keyboardEvent = document.createEvent("KeyboardEvent");
-						initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
-						keyboardEvent[initMethod](
-										   "keyup", // event type : keydown, keyup, keypress
-											true, // bubbles
-											true, // cancelable
-											window, // viewArg: should be window
-											false, // ctrlKeyArg
-											false, // altKeyArg
-											false, // shiftKeyArg
-											false, // metaKeyArg
-											0, // keyCodeArg : unsigned long the virtual key code, else 0
-											key.charCodeAt(0) // charCodeArgs : unsigned long the Unicode character associated with the depressed key, else 0
-						);
+						keyboardEvent = new KeyboardEvent("keyup", {
+							key: key,
+							keyCode: key.charCodeAt(0), //deprecated
+							which: key.charCodeAt(0), //deprecated
+							view: window,
+							bubbles: true,
+							cancelable: true,
+							ctrlKey: false,
+							altKey: false,
+							shiftKey: false,
+							metaKey: false
+						})
 						virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
 					}
 				}
