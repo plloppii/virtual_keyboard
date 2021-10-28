@@ -122,7 +122,7 @@
 	}
 }
 
-@media only screen and (max-height:600px){
+@media only screen and (max-height:590px){
 	#virtualKeyboardChromeExtensionNumberBarKbd1 {
 		display: none;
 	}
