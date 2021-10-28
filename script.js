@@ -154,91 +154,82 @@ function virtualKeyboardChromeExtension_click(key, skip) {
 				break;
 			case 'Enter':
 				if (virtualKeyboardChromeExtensionClickedElem != null) {
-					if (virtualKeyboardChromeExtensionElemType == "textarea") {
-						var pos = virtualKeyboardChromeExtensionClickedElem.selectionStart;
-						var posEnd = virtualKeyboardChromeExtensionClickedElem.selectionEnd;
-						virtualKeyboardChromeExtensionClickedElem.value = virtualKeyboardChromeExtensionClickedElem.value.substr(0, pos)+"\n"+virtualKeyboardChromeExtensionClickedElem.value.substr(posEnd);
-						virtualKeyboardChromeExtensionClickedElem.selectionStart = pos+1;
-						virtualKeyboardChromeExtensionClickedElem.selectionEnd = pos+1;
-					} else {
-					
-						var form  = virtualKeyboardChromeExtension_getParentByTagName(virtualKeyboardChromeExtensionClickedElem, "form");
-						if (form != null) {
-							var inputs = form.getElementsByTagName("input");
-							var c = 0;
+					var form  = virtualKeyboardChromeExtension_getParentByTagName(virtualKeyboardChromeExtensionClickedElem, "form");
+					if (form != null) {
+						var inputs = form.getElementsByTagName("input");
+						var c = 0;
+						for (var i=0; i<inputs.length; i++) {
+							if ((inputs[i].type == "submit") && (c <= 0)) {
+								inputs[i].click();
+								c++;
+							}
+						}
+						if (c <= 0) {
+							inputs = form.getElementsByTagName("button");
 							for (var i=0; i<inputs.length; i++) {
 								if ((inputs[i].type == "submit") && (c <= 0)) {
 									inputs[i].click();
 									c++;
 								}
 							}
-							if (c <= 0) {
-								inputs = form.getElementsByTagName("button");
-								for (var i=0; i<inputs.length; i++) {
-									if ((inputs[i].type == "submit") && (c <= 0)) {
-										inputs[i].click();
-										c++;
-									}
-								}
-							}
-							if (c <= 0) {
-								var keyboardEvent = document.createEvent("KeyboardEvent");
-								var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
-								keyboardEvent[initMethod](
-								   "submit", // event type : keydown, keyup, keypress
-									true, // bubbles
-									true, // cancelable
-									window, // viewArg: should be window
-									false, // ctrlKeyArg
-									false, // altKeyArg
-									false, // shiftKeyArg
-									false, // metaKeyArg
-									0, // keyCodeArg : unsigned long the virtual key code, else 0
-									0 // charCodeArgs : unsigned long the Unicode character associated with the depressed key, else 0
-								);
-								form.dispatchEvent(keyboardEvent);
-								//form.submit();
-							}
-							delete inputs;
 						}
-
-						keyboardEvent = new KeyboardEvent("keyup", {
-							key: 'Enter',
-							code: 'Enter',
-							keyCode: 13, //deprecated
-							charCode: 13,
-							which: 13, //deprecated
-							view: window,
-							bubbles: true,
-							cancelable: true,
-							ctrlKey: false,
-							altKey: false,
-							shiftKey: false,
-							metaKey: false
-						})
-						virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
-						delete form;
-
-						virtualKeyboardChromeExtensionState = false;
-						if (virtualKeyboardChromeExtensionFullScreenState) {
-							if (hardwareAcceleration) {
-								document.getElementById('virtualKeyboardChromeExtension').style.setProperty("-webkit-transform", "translate3d(0,450px,0)");
-							} else {
-								document.getElementById('virtualKeyboardChromeExtension').style.bottom = "-450px";
-							}
+						if (c <= 0) {
+							var keyboardEvent = document.createEvent("KeyboardEvent");
+							var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
+							keyboardEvent[initMethod](
+							   "submit", // event type : keydown, keyup, keypress
+								true, // bubbles
+								true, // cancelable
+								window, // viewArg: should be window
+								false, // ctrlKeyArg
+								false, // altKeyArg
+								false, // shiftKeyArg
+								false, // metaKeyArg
+								0, // keyCodeArg : unsigned long the virtual key code, else 0
+								0 // charCodeArgs : unsigned long the Unicode character associated with the depressed key, else 0
+							);
+							form.dispatchEvent(keyboardEvent);
+							//form.submit();
 						}
-						document.getElementById('virtualKeyboardChromeExtension').style.opacity = "0";
-						document.getElementById('virtualKeyboardChromeExtension').setAttribute("_state", "closed");
-						setTimeout(function() { document.getElementById('virtualKeyboardChromeExtension').style.display = "none"; }, 500);
-						if (virtualKeyboardChromeExtensionFullScreenState && intelligentScroll) {
-							var scrollYAmount = document.body.scrollTop;
-							if ((scrollYAmount <= virtualKeyboardChromeExtensionStateNewPos+50) && (scrollYAmount >= virtualKeyboardChromeExtensionStateNewPos-50)) {
-								document.getElementById("virtualKeyboardChromeExtensionOverlayScrollExtend").style.display = "none";
-								if (virtualKeyboardChromeExtensionPagePadding) {
-									document.body.style.marginBottom = "";
-								}
-								window.scroll(0,virtualKeyboardChromeExtensionStateLastPos);
+						delete inputs;
+					}
+
+					keyboardEvent = new KeyboardEvent("keyup", {
+						key: 'Enter',
+						code: 'Enter',
+						keyCode: 13, //deprecated
+						charCode: 13,
+						which: 13, //deprecated
+						view: window,
+						bubbles: true,
+						cancelable: true,
+						ctrlKey: false,
+						altKey: false,
+						shiftKey: false,
+						metaKey: false
+					})
+					virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
+					delete form;
+
+					virtualKeyboardChromeExtensionState = false;
+					if (virtualKeyboardChromeExtensionFullScreenState) {
+						if (hardwareAcceleration) {
+							document.getElementById('virtualKeyboardChromeExtension').style.setProperty("-webkit-transform", "translate3d(0,450px,0)");
+						} else {
+							document.getElementById('virtualKeyboardChromeExtension').style.bottom = "-450px";
+						}
+					}
+					document.getElementById('virtualKeyboardChromeExtension').style.opacity = "0";
+					document.getElementById('virtualKeyboardChromeExtension').setAttribute("_state", "closed");
+					setTimeout(function() { document.getElementById('virtualKeyboardChromeExtension').style.display = "none"; }, 500);
+					if (virtualKeyboardChromeExtensionFullScreenState && intelligentScroll) {
+						var scrollYAmount = document.body.scrollTop;
+						if ((scrollYAmount <= virtualKeyboardChromeExtensionStateNewPos+50) && (scrollYAmount >= virtualKeyboardChromeExtensionStateNewPos-50)) {
+							document.getElementById("virtualKeyboardChromeExtensionOverlayScrollExtend").style.display = "none";
+							if (virtualKeyboardChromeExtensionPagePadding) {
+								document.body.style.marginBottom = "";
 							}
+							window.scroll(0,virtualKeyboardChromeExtensionStateLastPos);
 						}
 					}
 					virtualKeyboardChromeExtension_generate_onchange();
