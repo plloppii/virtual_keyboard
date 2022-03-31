@@ -525,17 +525,26 @@ function virtualKeyboardChromeExtension_open(posY, posX, force) {
 }
 
 function vk_evt_input_blur(event) {
+	event.preventDefault()
+	event.stopPropagation()
+	event.stopImmediatePropagation()
 	console.log("vk_evt_input_blur")
-	virtualKeyboardChromeExtension_generate_onchange();
-	virtualKeyboardChromeExtensionClickedElem.type = virtualKeyboardChromeExtensionClickedElem.getAttribute("_originalType");
-	virtualKeyboardChromeExtensionClickedElem = undefined;
-	virtualKeyboardChromeExtensionCloseTimer = setTimeout(function() {
-		virtualKeyboardChromeExtension_click('Close');
-	}, 50);
+	console.log("virtualKeyboardChromeExtensionState: "+virtualKeyboardChromeExtensionState)
+	if(virtualKeyboardChromeExtensionState){
+		virtualKeyboardChromeExtensionClickedElem.focus()
+		virtualKeyboardChromeExtensionClickedElem.selectionStart = virtualKeyboardChromeExtensionClickedElem.selectionEnd = virtualKeyboardChromeExtensionClickedElem.value.length
+	}
+	// virtualKeyboardChromeExtension_generate_onchange();
+	// virtualKeyboardChromeExtensionClickedElem.type = virtualKeyboardChromeExtensionClickedElem.getAttribute("_originalType");
+	// virtualKeyboardChromeExtensionClickedElem = undefined;
+	// virtualKeyboardChromeExtensionCloseTimer = setTimeout(function() {
+	// 	virtualKeyboardChromeExtension_click('Close');
+	// }, 50);
 }
 
 
 function vk_evt_input_focus() {
+	console.log("vk_evt_input_focus")
 	if ((this.disabled==true) || (this.readOnly==true))
 		{
 		return;
@@ -813,7 +822,7 @@ function init_virtualKeyboardChromeExtension(firstTime) {
 			if ((e[i].type == "text") || (e[i].type == "password") || (e[i].type == "search") || (e[i].type == "email") || (e[i].type == "number") || (e[i].type == "tel") || (e[i].type == "url")) {
 				if (e[i].getAttribute("_vkEnabled") == undefined) {
 					e[i].setAttribute("_vkEnabled", "true");
-					// e[i].addEventListener("blur", vk_evt_input_blur, false);
+					e[i].addEventListener("blur", vk_evt_input_blur, false);
 					if (virtualKeyboardChromeExtensionTouchEvents == "true") {
 						console.log("Adding touchstart event handler")
 						e[i].addEventListener("touchstart", function(ent) { 
