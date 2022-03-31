@@ -262,25 +262,6 @@ function virtualKeyboardChromeExtension_click(key, skip) {
 					pos = pos-1;
 				}
 				console.log("Value: "+virtualKeyboardChromeExtensionClickedElem.value)
-				// var keyboardEvent = new KeyboardEvent("keydown", {key:key, keyCode:8, which:8})
-				// virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
-				
-				// keyboardEvent = new InputEvent("beforeinput", {inputType:"deleteContentBackward", data:null})
-				// virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
-
-				// keyboardEvent = new KeyboardEvent("keyup", {
-				// 			key: key,
-				// 			keyCode: 8,
-				// 			which: 8,
-				// 			view: window,
-				// 			bubbles: true,
-				// 			cancelable: true,
-				// 			ctrlKey: false,
-				// 			altKey: false,
-				// 			shiftKey: false,
-				// 			metaKey: false
-				// 		})
-				// virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
 
 				virtualKeyboardChromeExtensionClickedElem.value = virtualKeyboardChromeExtensionClickedElem.value.substr(0, pos)+virtualKeyboardChromeExtensionClickedElem.value.substr(posEnd);
 				virtualKeyboardChromeExtensionClickedElem.selectionStart = pos;
@@ -299,34 +280,6 @@ function virtualKeyboardChromeExtension_click(key, skip) {
 						maxLength = virtualKeyboardChromeExtensionClickedElem.maxLength;
 					}
 					if ((maxLength <= 0) || (virtualKeyboardChromeExtensionClickedElem.value.length < maxLength)) {
-						console.log("Firing keyboard event accordingly")
-						var keyboardEvent = new KeyboardEvent("keydown", {
-							key: key,
-							keyCode: key.charCodeAt(0), //deprecated
-							which: key.charCodeAt(0), //deprecated
-							view: window,
-							bubbles: true,
-							cancelable: true,
-							ctrlKey: false,
-							altKey: false,
-							shiftKey: false,
-							metaKey: false
-						})
-						virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
-						
-						keyboardEvent = new KeyboardEvent("keypress", {
-							key: key,
-							keyCode: key.charCodeAt(0), //deprecated
-							which: key.charCodeAt(0), //deprecated
-							view: window,
-							bubbles: true,
-							cancelable: true,
-							ctrlKey: false,
-							altKey: false,
-							shiftKey: false,
-							metaKey: false
-						})
-						virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
 
 						var pos = virtualKeyboardChromeExtensionClickedElem.selectionStart;
 						var posEnd = virtualKeyboardChromeExtensionClickedElem.selectionEnd;
@@ -355,20 +308,10 @@ function virtualKeyboardChromeExtension_click(key, skip) {
 						
 						var inputEvent = new InputEvent("input", {inputType:"insertText", data:key})
 						virtualKeyboardChromeExtensionClickedElem.dispatchEvent(inputEvent)
+
+						console.log("value: "+virtualKeyboardChromeExtensionClickedElem.value)
+						console.log("start, end: " + virtualKeyboardChromeExtensionClickedElem.selectionStart+", "+virtualKeyboardChromeExtensionClickedElem.selectionEnd)
 						
-						keyboardEvent = new KeyboardEvent("keyup", {
-							key: key,
-							keyCode: key.charCodeAt(0), //deprecated
-							which: key.charCodeAt(0), //deprecated
-							view: window,
-							bubbles: true,
-							cancelable: true,
-							ctrlKey: false,
-							altKey: false,
-							shiftKey: false,
-							metaKey: false
-						})
-						virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
 					}
 				}
 				break;
