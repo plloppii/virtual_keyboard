@@ -813,7 +813,7 @@ function init_virtualKeyboardChromeExtension(firstTime) {
 			if ((e[i].type == "text") || (e[i].type == "password") || (e[i].type == "search") || (e[i].type == "email") || (e[i].type == "number") || (e[i].type == "tel") || (e[i].type == "url")) {
 				if (e[i].getAttribute("_vkEnabled") == undefined) {
 					e[i].setAttribute("_vkEnabled", "true");
-					e[i].addEventListener("blur", vk_evt_input_blur, false);
+					// e[i].addEventListener("blur", vk_evt_input_blur, false);
 					if (virtualKeyboardChromeExtensionTouchEvents == "true") {
 						console.log("Adding touchstart event handler")
 						e[i].addEventListener("touchstart", function(ent) { 
