@@ -262,30 +262,33 @@ function virtualKeyboardChromeExtension_click(key, skip) {
 					pos = pos-1;
 				}
 				console.log("Value: "+virtualKeyboardChromeExtensionClickedElem.value)
-				var keyboardEvent = new KeyboardEvent("keydown", {key:key, keyCode:8, which:8})
-				virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
+				// var keyboardEvent = new KeyboardEvent("keydown", {key:key, keyCode:8, which:8})
+				// virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
 				
-				keyboardEvent = new InputEvent("beforeinput", {inputType:"deleteContentBackward", data:null})
-				virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
+				// keyboardEvent = new InputEvent("beforeinput", {inputType:"deleteContentBackward", data:null})
+				// virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
 
-				keyboardEvent = new KeyboardEvent("keyup", {
-							key: key,
-							keyCode: 8,
-							which: 8,
-							view: window,
-							bubbles: true,
-							cancelable: true,
-							ctrlKey: false,
-							altKey: false,
-							shiftKey: false,
-							metaKey: false
-						})
-				virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
+				// keyboardEvent = new KeyboardEvent("keyup", {
+				// 			key: key,
+				// 			keyCode: 8,
+				// 			which: 8,
+				// 			view: window,
+				// 			bubbles: true,
+				// 			cancelable: true,
+				// 			ctrlKey: false,
+				// 			altKey: false,
+				// 			shiftKey: false,
+				// 			metaKey: false
+				// 		})
+				// virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
 
 				virtualKeyboardChromeExtensionClickedElem.value = virtualKeyboardChromeExtensionClickedElem.value.substr(0, pos)+virtualKeyboardChromeExtensionClickedElem.value.substr(posEnd);
 				virtualKeyboardChromeExtensionClickedElem.selectionStart = pos;
 				virtualKeyboardChromeExtensionClickedElem.selectionEnd = pos;
                 virtualKeyboardChromeExtensionElemChanged=true;
+
+				var keyboardEvent = new InputEvent("input", {inputType:"deleteContentBackward", data:null})
+				virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent)
 				console.log("Value: "+virtualKeyboardChromeExtensionClickedElem.value)
 				break;
 			default:
