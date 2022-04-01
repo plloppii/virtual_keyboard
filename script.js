@@ -137,13 +137,11 @@ function virtualKeyboardChromeExtension_click(key, skip) {
 					}, 500);
 					if (virtualKeyboardChromeExtensionFullScreenState && intelligentScroll) {
 						var scrollYAmount = document.body.scrollTop;
-						if ((scrollYAmount <= virtualKeyboardChromeExtensionStateNewPos+50) && (scrollYAmount >= virtualKeyboardChromeExtensionStateNewPos-50)) {
-							document.getElementById("virtualKeyboardChromeExtensionOverlayScrollExtend").style.display = "none";
-							if (virtualKeyboardChromeExtensionPagePadding) {
-								document.body.style.marginBottom = "";
-							}
-							window.scroll(0,virtualKeyboardChromeExtensionStateLastPos);
+						document.getElementById("virtualKeyboardChromeExtensionOverlayScrollExtend").style.display = "none";
+						if (virtualKeyboardChromeExtensionPagePadding) {
+							document.body.style.marginBottom = "";
 						}
+						window.scroll(0,virtualKeyboardChromeExtensionStateLastPos);
 					}
 				}
 				document.getElementById("virtualKeyboardChromeExtensionOverlayDemand").setAttribute("_state", "close");
