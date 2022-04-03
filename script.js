@@ -279,8 +279,6 @@ function virtualKeyboardChromeExtension_click(key, skip) {
 					}
 					if ((maxLength <= 0) || (virtualKeyboardChromeExtensionClickedElem.value.length < maxLength)) {
 
-						var pos = virtualKeyboardChromeExtensionClickedElem.selectionStart;
-						var posEnd = virtualKeyboardChromeExtensionClickedElem.selectionEnd;
 						if (virtualKeyboardChromeExtensionShift) {
 							if ((key.charCodeAt(0) >= 97) && (key.charCodeAt(0) <= 122)) {
 								key = String.fromCharCode(key.charCodeAt(0)-32);
@@ -293,44 +291,65 @@ function virtualKeyboardChromeExtension_click(key, skip) {
 								key = String.fromCharCode(key.charCodeAt(0)-1);
 							}
 						}
-						// virtualKeyboardChromeExtensionClickedElem.value = virtualKeyboardChromeExtensionClickedElem.value.substr(0, pos)+key+virtualKeyboardChromeExtensionClickedElem.value.substr(posEnd);
-						// virtualKeyboardChromeExtensionClickedElem.selectionStart = pos+1;
-						// virtualKeyboardChromeExtensionClickedElem.selectionEnd = pos+1;
-						if ((virtualKeyboardChromeExtensionShift) && (virtualKeyboardChromeExtensionShiftBehaviour)) {
-							virtualKeyboardChromeExtensionShift = !virtualKeyboardChromeExtensionShift;
-							document.getElementById("virtualKeyboardChromeExtensionMainKbd").className= virtualKeyboardChromeExtensionShift ? "Shift" : "";
-							virtualKeyboardChromeExtension_shiftButtonKeys();
+						if(virtualKeyboardChromeExtensionClickedElem.className == "cm-content"){
+							var active = virtualKeyboardChromeExtensionClickedElem.getElementsByClassName("cm-activeLine")[0]
+							var caret_position = getCaretCharacterOffsetWithin(active)
+							console.log(caret_position)
+							var firstHalf = active.innerText.substr(0, caret_position)
+							var lastHalf = active.innerText.substr(caret_position)
+							active.innerText = firstHalf + key+ lastHalf
+							setCaretCharacterOffset(active, caret_position+1)
 						}
-						virtualKeyboardChromeExtensionDraggabling = false;
-						
-						var inputEvent = new InputEvent("input", {inputType:"insertText", data:key})
-						virtualKeyboardChromeExtensionClickedElem.dispatchEvent(inputEvent)
-
-						// virtualKeyboardChromeExtensionElemChanged=true;
-
-						keyboardEvent = new KeyboardEvent("keyup", {
-							key: key,
-							keyCode: key.charCodeAt(0), //deprecated
-							which: key.charCodeAt(0), //deprecated
-							view: window,
-							bubbles: true,
-							cancelable: true,
-							ctrlKey: false,
-							altKey: false,
-							shiftKey: false,
-							metaKey: false
-						})
-						virtualKeyboardChromeExtensionClickedElem.dispatchEvent(keyboardEvent);
-
-						// console.log("value: "+virtualKeyboardChromeExtensionClickedElem.value)
-						// console.log("start, end: " + virtualKeyboardChromeExtensionClickedElem.selectionStart+", "+virtualKeyboardChromeExtensionClickedElem.selectionEnd)
-						
+						else{
+							var pos = virtualKeyboardChromeExtensionClickedElem.selectionStart;
+							var posEnd = virtualKeyboardChromeExtensionClickedElem.selectionEnd;
+							virtualKeyboardChromeExtensionClickedElem.value = virtualKeyboardChromeExtensionClickedElem.value.substr(0, pos)+key+virtualKeyboardChromeExtensionClickedElem.value.substr(posEnd);
+							virtualKeyboardChromeExtensionClickedElem.selectionStart = pos+1;
+							virtualKeyboardChromeExtensionClickedElem.selectionEnd = pos+1;
+							virtualKeyboardChromeExtensionElemChanged=true;
+							if ((virtualKeyboardChromeExtensionShift) && (virtualKeyboardChromeExtensionShiftBehaviour)) {
+								virtualKeyboardChromeExtensionShift = !virtualKeyboardChromeExtensionShift;
+								document.getElementById("virtualKeyboardChromeExtensionMainKbd").className= virtualKeyboardChromeExtensionShift ? "Shift" : "";
+								virtualKeyboardChromeExtension_shiftButtonKeys();
+							}
+							virtualKeyboardChromeExtensionDraggabling = false;
+							
+							var inputEvent = new InputEvent("input", {inputType:"insertText", data:key})
+							virtualKeyboardChromeExtensionClickedElem.dispatchEvent(inputEvent)
+						}
 					}
 				}
 				break;
 		}
 	}
 }
+
+function getCaretCharacterOffsetWithin(element) {
+    var caretOffset = 0;
+    if (typeof window.getSelection != "undefined") {
+        var range = window.getSelection().getRangeAt(0);
+        var preCaretRange = range.cloneRange();
+        preCaretRange.selectNodeContents(element);
+        preCaretRange.setEnd(range.endContainer, range.endOffset);
+        caretOffset = preCaretRange.toString().length;
+    } else if (typeof document.selection != "undefined" && document.selection.type != "Control") {
+        var textRange = document.selection.createRange();
+        var preCaretTextRange = document.body.createTextRange();
+        preCaretTextRange.moveToElementText(element);
+        preCaretTextRange.setEndPoint("EndToEnd", textRange);
+        caretOffset = preCaretTextRange.text.length;
+    }
+    return caretOffset;
+}
+function setCaretCharacterOffset(element, set_caret){
+	var range = document.createRange();
+	var sel = window.getSelection();
+	range.setStart(element.childNodes[0], set_caret);
+	range.collapse(true);
+	sel.removeAllRanges();
+	sel.addRange(range);
+}
+
 
 
 function setting_load(key, callback) {
@@ -340,7 +359,6 @@ function setting_load(key, callback) {
 }
 
 function setting_reloadKeyboardToggle(openState) {
-	console.log("setting_releaseKeyboardToggle")
 	chrome.extension.sendRequest({method: "getLocalStorage", key: "keyboardEnabled"}, function(response) {
 	  	virtualKeyboardChromeExtensionKeyboardEnabled = response.data;
 		if (openState) {
@@ -921,7 +939,6 @@ function init_virtualKeyboardChromeExtension(firstTime) {
 				e[i].addEventListener("blur", vk_evt_cmcontent_blur, false);
 				e[i].addEventListener("unfocus", vk_evt_cmcontent_blur, false);
 				e[i].addEventListener("click", vk_evt_cmcontent_click, false);
-				e[i].addEventListener("focus", vk_evt_cmcontent_click, false);
 				// e[i].addEventListener("blur", function() {
 				// 	virtualKeyboardChromeExtension_generate_onchange();
 				// 	virtualKeyboardChromeExtensionClickedElem = undefined;
