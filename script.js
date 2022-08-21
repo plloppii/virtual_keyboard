@@ -130,13 +130,8 @@ function virtualKeyboardChromeExtension_click(key, skip) {
 					}
 					document.getElementById('virtualKeyboardChromeExtension').style.opacity = "0";
 					document.getElementById('virtualKeyboardChromeExtension').setAttribute("_state", "closed");
-					setTimeout(function() { 
-						if (virtualKeyboardChromeExtensionState == false) {
-							document.getElementById('virtualKeyboardChromeExtension').style.display = "none"; 
-						}
-					}, 500);
+					setTimeout(function() { document.getElementById('virtualKeyboardChromeExtension').style.display = "none"; }, 500);
 					if (virtualKeyboardChromeExtensionFullScreenState && intelligentScroll) {
-						var scrollYAmount = document.body.scrollTop;
 						document.getElementById("virtualKeyboardChromeExtensionOverlayScrollExtend").style.display = "none";
 						if (virtualKeyboardChromeExtensionPagePadding) {
 							document.body.style.marginBottom = "";
@@ -145,11 +140,7 @@ function virtualKeyboardChromeExtension_click(key, skip) {
 					}
 				}
 				document.getElementById("virtualKeyboardChromeExtensionOverlayDemand").setAttribute("_state", "close");
-				setTimeout(function() {
-					if (virtualKeyboardChromeExtensionState == false) {
-						document.getElementById("virtualKeyboardChromeExtensionOverlayDemand").style.display = "none";
-					}
-				}, 200);
+				setTimeout(function() { document.getElementById("virtualKeyboardChromeExtensionOverlayDemand").style.display = "none"; }, 200);
 				break;
 			case 'Enter':
 				console.log("Hitting Enter")
@@ -234,15 +225,14 @@ function virtualKeyboardChromeExtension_click(key, skip) {
 					document.getElementById('virtualKeyboardChromeExtension').setAttribute("_state", "closed");
 					setTimeout(function() { document.getElementById('virtualKeyboardChromeExtension').style.display = "none"; }, 500);
 					if (virtualKeyboardChromeExtensionFullScreenState && intelligentScroll) {
-						var scrollYAmount = document.body.scrollTop;
-						if ((scrollYAmount <= virtualKeyboardChromeExtensionStateNewPos+50) && (scrollYAmount >= virtualKeyboardChromeExtensionStateNewPos-50)) {
-							document.getElementById("virtualKeyboardChromeExtensionOverlayScrollExtend").style.display = "none";
-							if (virtualKeyboardChromeExtensionPagePadding) {
-								document.body.style.marginBottom = "";
-							}
-							window.scroll(0,virtualKeyboardChromeExtensionStateLastPos);
+						document.getElementById("virtualKeyboardChromeExtensionOverlayScrollExtend").style.display = "none";
+						if (virtualKeyboardChromeExtensionPagePadding) {
+							document.body.style.marginBottom = "";
 						}
+						window.scroll(0,virtualKeyboardChromeExtensionStateLastPos);
 					}
+					document.getElementById("virtualKeyboardChromeExtensionOverlayDemand").setAttribute("_state", "close");
+					setTimeout(function() { document.getElementById("virtualKeyboardChromeExtensionOverlayDemand").style.display = "none"; }, 200);
 					virtualKeyboardChromeExtension_generate_onchange();
 				}
 				break;
@@ -732,13 +722,11 @@ function xk_settings_load_main(response) {
 		chrome.extension.sendRequest({ method: "createTab", url: chrome.extension.getURL("options.html") });		
 		setting_set("openedFirstTime", "true");
 	}
-	if (response.smallKeyboard == "true") {
-		document.getElementById('virtualKeyboardChromeExtension').className = "modeS";		
-		virtualKeyboardChromeExtensionFullScreenState = false;
-	} else {
-		document.getElementById('virtualKeyboardChromeExtension').className = "";
-		virtualKeyboardChromeExtensionFullScreenState = true;
-	}
+
+	// Always default to FullscreenState for keyboard
+	document.getElementById('virtualKeyboardChromeExtension').className = "";
+	virtualKeyboardChromeExtensionFullScreenState = true;
+
 	virtualKeyboardChromeExtensionShiftBehaviour = response.capsLock == "false";
 	virtualKeyboardChromeExtensionTouchEvents = response.touchEvents;
 	if (virtualKeyboardChromeExtensionTouchEvents == undefined) { virtualKeyboardChromeExtensionTouchEvents = "false"; }
@@ -1439,10 +1427,8 @@ function vk_ajax_load_main() {
 			autoTriggerLinks = response.autoTriggerLinks == "true";
 		}
 		
-		// intelligentScroll
-		if (response.intelligentScroll != undefined) {
-			intelligentScroll = response.intelligentScroll == "true";
-		}
+		// intelligentScroll always on
+		intelligentScroll = true
 		
 		// autoTriggerAfter
 		if (response.autoTriggerAfter == undefined) { response.autoTriggerAfter = 1; }
