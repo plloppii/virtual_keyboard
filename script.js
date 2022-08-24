@@ -559,16 +559,18 @@ function vk_evt_input_blur(event) {
 	event.stopImmediatePropagation()
 	console.log("vk_evt_input_blur")
 	console.log("virtualKeyboardChromeExtensionState: "+virtualKeyboardChromeExtensionState)
-	if(virtualKeyboardChromeExtensionState){
-		virtualKeyboardChromeExtensionClickedElem.focus()
-		virtualKeyboardChromeExtensionClickedElem.selectionStart = virtualKeyboardChromeExtensionClickedElem.selectionEnd = virtualKeyboardChromeExtensionClickedElem.value.length
-	}
-	// virtualKeyboardChromeExtension_generate_onchange();
-	// virtualKeyboardChromeExtensionClickedElem.type = virtualKeyboardChromeExtensionClickedElem.getAttribute("_originalType");
-	// virtualKeyboardChromeExtensionClickedElem = undefined;
-	// virtualKeyboardChromeExtensionCloseTimer = setTimeout(function() {
-	// 	virtualKeyboardChromeExtension_click('Close');
-	// }, 50);
+	// if(virtualKeyboardChromeExtensionState){
+	// 	virtualKeyboardChromeExtensionClickedElem.focus()
+	// 	virtualKeyboardChromeExtensionClickedElem.selectionStart = virtualKeyboardChromeExtensionClickedElem.selectionEnd = virtualKeyboardChromeExtensionClickedElem.value.length
+	// }
+
+
+	virtualKeyboardChromeExtension_generate_onchange();
+	virtualKeyboardChromeExtensionClickedElem.type = virtualKeyboardChromeExtensionClickedElem.getAttribute("_originalType");
+	virtualKeyboardChromeExtensionClickedElem = undefined;
+	virtualKeyboardChromeExtensionCloseTimer = setTimeout(function() {
+		virtualKeyboardChromeExtension_click('Close');
+	}, 50);
 }
 
 
@@ -962,9 +964,12 @@ function init_virtualKeyboardChromeExtension(firstTime) {
 		if (firstTime) {
 			if (top == self) {
 				var v = document.getElementById("virtualKeyboardChromeExtension");
-				v.onclick = function(ent) {
+				v.addEventListener('click', function(ent) {
 					ent.preventDefault();
-				}
+				}, false)
+				v.addEventListener('focus', function(event) {
+					event.preventDefault();
+				}, false)
 				if (virtualKeyboardChromeExtensionTouchEvents == "true") {
 					v.ontouchstart = function(ent) {
 						ent.preventDefault();
@@ -974,12 +979,12 @@ function init_virtualKeyboardChromeExtension(firstTime) {
 					}
 					
 				} 
-				v.onmousedown = function(ent) {
+				v.addEventListener('mousedown', function(ent) {
 					ent.preventDefault();
-				}
-				v.onmouseup = function(ent) {
+				}, false)
+				v.addEventListener('mouseup', function(ent) {
 					ent.preventDefault();
-				}
+				}, false)
 				delete v;
 			}
 			var e = document.getElementsByClassName("kbdClick");
